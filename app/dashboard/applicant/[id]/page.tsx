@@ -14,7 +14,9 @@ import {
   X,
   Plus,
   Check,
-  Eye
+  Eye,
+  Sparkles,
+  RefreshCw
 } from 'lucide-react'
 import { Applicant, Interaction } from '@/lib/airtable'
 
@@ -26,6 +28,8 @@ export default function ApplicantDetailPage() {
   const [newNote, setNewNote] = useState('')
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [selectedResume, setSelectedResume] = useState<string | null>(null)
+  const [showExpandedNotes, setShowExpandedNotes] = useState(false)
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
   
   const router = useRouter()
   const params = useParams()
@@ -101,6 +105,33 @@ export default function ApplicantDetailPage() {
       }
     } catch (error) {
       console.error('Error adding note:', error)
+    }
+  }
+
+  const generateSummary = async () => {
+    if (!applicant) return
+    
+    setIsGeneratingSummary(true)
+    try {
+      const response = await fetch(`/api/applicants/${params.id}/summary`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setApplicant(data.applicant)
+        alert('AI summary generated successfully!')
+      } else {
+        alert('Error generating summary. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error generating summary:', error)
+      alert('Error generating summary. Please try again.')
+    } finally {
+      setIsGeneratingSummary(false)
     }
   }
 
@@ -295,14 +326,37 @@ export default function ApplicantDetailPage() {
             <div className="card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Notes & Interactions</h3>
-                <button
-                  onClick={() => setIsAddingNote(true)}
-                  className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span className="text-sm">Add Note</span>
-                </button>
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={generateSummary}
+                    disabled={isGeneratingSummary}
+                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isGeneratingSummary ? 'animate-spin' : ''}`} />
+                    <span className="text-sm">{isGeneratingSummary ? 'Generating...' : 'Generate AI Summary'}</span>
+                  </button>
+                  <button
+                    onClick={() => setIsAddingNote(true)}
+                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="text-sm">Add Note</span>
+                  </button>
+                </div>
               </div>
+
+              {/* AI Summary */}
+              {applicant.notes_summary && (
+                <div className="mb-6 p-4 bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg border border-primary-200">
+                  <div className="flex items-start space-x-3">
+                    <Sparkles className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-primary-900 mb-2">AI Summary</h4>
+                      <p className="text-sm text-primary-800 leading-relaxed">{applicant.notes_summary}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {isAddingNote && (
                 <div className="mb-4 p-4 bg-gray-50 rounded-md">
@@ -334,14 +388,55 @@ export default function ApplicantDetailPage() {
               )}
 
               <div className="space-y-4">
-                {interactions.map((interaction) => (
-                  <div key={interaction.id} className="border-l-4 border-primary-200 pl-4">
-                    <p className="text-gray-900 text-sm">{interaction.note}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(interaction.created_at).toLocaleString()}
-                    </p>
+                {interactions.length > 0 && (
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-gray-700">Individual Notes</h4>
+                    <button
+                      onClick={() => setShowExpandedNotes(!showExpandedNotes)}
+                      className="text-sm text-primary-600 hover:text-primary-700 flex items-center space-x-1"
+                    >
+                      <span>{showExpandedNotes ? 'Hide' : 'Show'} Expanded Notes</span>
+                      <span className="text-xs">({interactions.length} notes)</span>
+                    </button>
                   </div>
-                ))}
+                )}
+                
+                {showExpandedNotes ? (
+                  <div className="space-y-3">
+                    {interactions.map((interaction) => (
+                      <div key={interaction.id} className="border-l-4 border-primary-200 pl-4 py-2">
+                        <p className="text-gray-900 text-sm leading-relaxed">{interaction.note}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <p className="text-xs text-gray-500">
+                            {new Date(interaction.created_at).toLocaleString()}
+                          </p>
+                          {interaction.author_email && (
+                            <p className="text-xs text-gray-400">
+                              by {interaction.author_email}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {interactions.slice(0, 2).map((interaction) => (
+                      <div key={interaction.id} className="border-l-4 border-primary-200 pl-4">
+                        <p className="text-gray-900 text-sm line-clamp-2">{interaction.note}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(interaction.created_at).toLocaleString()}
+                        </p>
+                      </div>
+                    ))}
+                    {interactions.length > 2 && (
+                      <p className="text-xs text-gray-500 italic">
+                        +{interactions.length - 2} more notes. Click "Show Expanded Notes" to see all.
+                      </p>
+                    )}
+                  </div>
+                )}
+                
                 {interactions.length === 0 && (
                   <p className="text-gray-500 text-sm">No notes yet</p>
                 )}

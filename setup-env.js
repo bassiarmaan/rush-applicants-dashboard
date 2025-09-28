@@ -2,14 +2,17 @@ const fs = require('fs');
 const path = require('path');
 
 const envContent = `# Airtable Configuration
-AIRTABLE_API_KEY=pat5MZBuJCCU105MQ.8bcbff2a02b3a16fd465d2f1a152f87d96164ebaf598fbe689eac8bb746a4d2f
-AIRTABLE_BASE_ID=appEmD27JyhYr4osO
+AIRTABLE_API_KEY=your_airtable_api_key_here
+AIRTABLE_BASE_ID=your_airtable_base_id_here
 
 # Dashboard Password (change this to a secure password)
-DASHBOARD_PASSWORD=rush2025admin
+DASHBOARD_PASSWORD=your_secure_password_here
 
 # JWT Secret for authentication
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# Perplexity API
+PERPLEXITY_API_KEY=your_perplexity_api_key_here
 `;
 
 const envPath = path.join(__dirname, '.env.local');

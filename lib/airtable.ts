@@ -1,5 +1,5 @@
-const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY || 'pat5MZBuJCCU105MQ.8bcbff2a02b3a16fd465d2f1a152f87d96164ebaf598fbe689eac8bb746a4d2f'
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || 'appEmD27JyhYr4osO'
+const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID
 
 export interface Applicant {
   id: string
@@ -19,6 +19,7 @@ export interface Applicant {
   }>
   photo?: string
   notes?: string
+  notes_summary?: string
   status?: 'Rejected' | 'Ongoing'
   day_1?: boolean
   day_2?: boolean
@@ -38,10 +39,18 @@ export interface Interaction {
 }
 
 export class AirtableAPI {
-  private baseUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}`
-  private headers = {
-    'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
-    'Content-Type': 'application/json'
+  private baseUrl: string
+  private headers: Record<string, string>
+
+  constructor() {
+    if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+      throw new Error('Airtable API key and base ID must be configured in environment variables')
+    }
+    this.baseUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}`
+    this.headers = {
+      'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+      'Content-Type': 'application/json'
+    }
   }
 
   async getApplicants(): Promise<Applicant[]> {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Search, User, Mail, Calendar, FileText, LogOut, Plus, Filter, Check } from 'lucide-react'
+import { Search, User, Mail, Calendar, FileText, LogOut, Plus, Filter, Check, Sparkles } from 'lucide-react'
 import { Applicant } from '@/lib/airtable'
 
 export default function DashboardPage() {
@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const [sortBy, setSortBy] = useState<'name' | 'year' | 'date'>('name')
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isGeneratingSummaries, setIsGeneratingSummaries] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -106,6 +107,32 @@ export default function DashboardPage() {
     }
   }
 
+  const generateSummaries = async () => {
+    setIsGeneratingSummaries(true)
+    try {
+      const response = await fetch('/api/applicants/generate-summaries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        alert(`Successfully generated ${data.successful} summaries out of ${data.total} applicants.`)
+        // Refresh the applicants data
+        fetchApplicants()
+      } else {
+        alert('Error generating summaries. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error generating summaries:', error)
+      alert('Error generating summaries. Please try again.')
+    } finally {
+      setIsGeneratingSummaries(false)
+    }
+  }
+
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'Rejected':
@@ -135,13 +162,23 @@ export default function DashboardPage() {
               <h1 className="text-2xl font-bold text-gray-900">Rush Applicants Dashboard</h1>
               <p className="text-sm text-gray-600">Manage and review rush applicants</p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
-            </button>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={generateSummaries}
+                disabled={isGeneratingSummaries}
+                className="flex items-center space-x-2 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>{isGeneratingSummaries ? 'Generating...' : 'Generate AI Summaries'}</span>
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              >
+                <LogOut className="w-5 h-5" />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -277,6 +314,19 @@ export default function DashboardPage() {
                     <span>Applied {new Date(applicant.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
+
+                {/* AI Summary */}
+                {applicant.notes_summary && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-start space-x-2">
+                      <Sparkles className="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-gray-700 mb-1">AI Summary</p>
+                        <p className="text-sm text-gray-600 line-clamp-3">{applicant.notes_summary}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
               </Link>
             ))}
