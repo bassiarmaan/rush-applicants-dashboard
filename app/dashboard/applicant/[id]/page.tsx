@@ -14,9 +14,7 @@ import {
   X,
   Plus,
   Check,
-  Eye,
-  Sparkles,
-  RefreshCw
+  Eye
 } from 'lucide-react'
 import { Applicant, Interaction } from '@/lib/airtable'
 
@@ -29,7 +27,6 @@ export default function ApplicantDetailPage() {
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [selectedResume, setSelectedResume] = useState<string | null>(null)
   const [showExpandedNotes, setShowExpandedNotes] = useState(false)
-  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
   
   const router = useRouter()
   const params = useParams()
@@ -108,32 +105,6 @@ export default function ApplicantDetailPage() {
     }
   }
 
-  const generateSummary = async () => {
-    if (!applicant) return
-    
-    setIsGeneratingSummary(true)
-    try {
-      const response = await fetch(`/api/applicants/${params.id}/summary`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setApplicant(data.applicant)
-        alert('AI summary generated successfully!')
-      } else {
-        alert('Error generating summary. Please try again.')
-      }
-    } catch (error) {
-      console.error('Error generating summary:', error)
-      alert('Error generating summary. Please try again.')
-    } finally {
-      setIsGeneratingSummary(false)
-    }
-  }
 
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -326,37 +297,15 @@ export default function ApplicantDetailPage() {
             <div className="card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Notes & Interactions</h3>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={generateSummary}
-                    disabled={isGeneratingSummary}
-                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 disabled:opacity-50"
-                  >
-                    <RefreshCw className={`w-4 h-4 ${isGeneratingSummary ? 'animate-spin' : ''}`} />
-                    <span className="text-sm">{isGeneratingSummary ? 'Generating...' : 'Generate AI Summary'}</span>
-                  </button>
-                  <button
-                    onClick={() => setIsAddingNote(true)}
-                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="text-sm">Add Note</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => setIsAddingNote(true)}
+                  className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm">Add Note</span>
+                </button>
               </div>
 
-              {/* AI Summary */}
-              {applicant.notes_summary && (
-                <div className="mb-6 p-4 bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg border border-primary-200">
-                  <div className="flex items-start space-x-3">
-                    <Sparkles className="w-5 h-5 text-primary-600 mt-0.5 flex-shrink-0" />
-                    <div className="flex-1">
-                      <h4 className="text-sm font-semibold text-primary-900 mb-2">AI Summary</h4>
-                      <p className="text-sm text-primary-800 leading-relaxed">{applicant.notes_summary}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {isAddingNote && (
                 <div className="mb-4 p-4 bg-gray-50 rounded-md">

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Search, User, Mail, Calendar, FileText, LogOut, Plus, Filter, Check, Sparkles } from 'lucide-react'
+import { Search, User, Mail, Calendar, FileText, LogOut, Plus, Filter, Check, RefreshCw } from 'lucide-react'
 import { Applicant } from '@/lib/airtable'
 
 export default function DashboardPage() {
@@ -15,7 +15,8 @@ export default function DashboardPage() {
   const [sortBy, setSortBy] = useState<'name' | 'year' | 'date'>('name')
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isGeneratingSummaries, setIsGeneratingSummaries] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -26,6 +27,17 @@ export default function DashboardPage() {
     if (isAuthenticated) {
       fetchApplicants()
     }
+  }, [isAuthenticated])
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    if (!isAuthenticated) return
+
+    const interval = setInterval(() => {
+      fetchApplicants(true) // Silent refresh
+    }, 30000) // 30 seconds
+
+    return () => clearInterval(interval)
   }, [isAuthenticated])
 
   useEffect(() => {
@@ -45,17 +57,28 @@ export default function DashboardPage() {
     }
   }
 
-  const fetchApplicants = async () => {
+  const fetchApplicants = async (silent = false) => {
+    if (!silent) {
+      setIsLoading(true)
+    } else {
+      setIsRefreshing(true)
+    }
+
     try {
       const response = await fetch('/api/applicants')
       if (response.ok) {
         const data = await response.json()
+        console.log(`Frontend: Received ${data.length} applicants from API`)
         setApplicants(data)
+        setLastRefresh(new Date())
+      } else {
+        console.error('API response not ok:', response.status, response.statusText)
       }
     } catch (error) {
       console.error('Error fetching applicants:', error)
     } finally {
       setIsLoading(false)
+      setIsRefreshing(false)
     }
   }
 
@@ -107,31 +130,6 @@ export default function DashboardPage() {
     }
   }
 
-  const generateSummaries = async () => {
-    setIsGeneratingSummaries(true)
-    try {
-      const response = await fetch('/api/applicants/generate-summaries', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        alert(`Successfully generated ${data.successful} summaries out of ${data.total} applicants.`)
-        // Refresh the applicants data
-        fetchApplicants()
-      } else {
-        alert('Error generating summaries. Please try again.')
-      }
-    } catch (error) {
-      console.error('Error generating summaries:', error)
-      alert('Error generating summaries. Please try again.')
-    } finally {
-      setIsGeneratingSummaries(false)
-    }
-  }
 
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -164,12 +162,12 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={generateSummaries}
-                disabled={isGeneratingSummaries}
-                className="flex items-center space-x-2 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => fetchApplicants()}
+                disabled={isRefreshing}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 disabled:opacity-50"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>{isGeneratingSummaries ? 'Generating...' : 'Generate AI Summaries'}</span>
+                <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <span>Refresh</span>
               </button>
               <button
                 onClick={handleLogout}
@@ -244,6 +242,17 @@ export default function DashboardPage() {
             <div className="flex items-center space-x-4 text-sm text-gray-600">
               <span>Total: {applicants.length}</span>
               <span>Filtered: {filteredApplicants.length}</span>
+              {lastRefresh && (
+                <span className="text-xs text-gray-500">
+                  Last updated: {lastRefresh.toLocaleTimeString()}
+                </span>
+              )}
+              {isRefreshing && (
+                <span className="text-xs text-primary-600 flex items-center">
+                  <RefreshCw className="w-3 h-3 animate-spin mr-1" />
+                  Updating...
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -315,18 +324,6 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                {/* AI Summary */}
-                {applicant.notes_summary && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex items-start space-x-2">
-                      <Sparkles className="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-gray-700 mb-1">AI Summary</p>
-                        <p className="text-sm text-gray-600 line-clamp-3">{applicant.notes_summary}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
               </Link>
             ))}

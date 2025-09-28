@@ -19,7 +19,6 @@ export interface Applicant {
   }>
   photo?: string
   notes?: string
-  notes_summary?: string
   status?: 'Rejected' | 'Ongoing'
   day_1?: boolean
   day_2?: boolean
@@ -55,19 +54,38 @@ export class AirtableAPI {
 
   async getApplicants(): Promise<Applicant[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/Applicants`, {
-        headers: this.headers
-      })
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      
-      const data = await response.json()
-      return data.records.map((record: any) => ({
-        id: record.id,
-        ...record.fields
-      }))
+      const allRecords: Applicant[] = []
+      let offset: string | undefined
+
+      do {
+        let url = `${this.baseUrl}/Applicants?pageSize=100`
+        if (offset) {
+          url += `&offset=${offset}`
+        }
+
+        const response = await fetch(url, {
+          headers: this.headers
+        })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        // Add records from this page
+        const pageRecords = data.records.map((record: any) => ({
+          id: record.id,
+          ...record.fields
+        }))
+        allRecords.push(...pageRecords)
+        
+        // Check if there are more pages
+        offset = data.offset
+      } while (offset)
+
+      console.log(`Fetched ${allRecords.length} total applicants from Airtable`)
+      return allRecords
     } catch (error) {
       console.error('Error fetching applicants:', error)
       throw error

@@ -11,8 +11,6 @@ DASHBOARD_PASSWORD=your_secure_password_here
 # JWT Secret for authentication
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
-# Perplexity API
-PERPLEXITY_API_KEY=your_perplexity_api_key_here
 `;
 
 const envPath = path.join(__dirname, '.env.local');

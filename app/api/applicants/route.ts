@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     const airtable = new AirtableAPI()
     const applicants = await airtable.getApplicants()
     
+    console.log(`API: Returning ${applicants.length} applicants to frontend`)
     return NextResponse.json(applicants)
   } catch (error) {
     console.error('Error fetching applicants:', error)
