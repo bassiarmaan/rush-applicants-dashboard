@@ -11,8 +11,6 @@ import {
   FileText, 
   Download, 
   Image as ImageIcon,
-  Edit,
-  Save,
   X,
   Plus,
   Check,
@@ -25,8 +23,6 @@ export default function ApplicantDetailPage() {
   const [interactions, setInteractions] = useState<Interaction[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editData, setEditData] = useState<Partial<Applicant>>({})
   const [newNote, setNewNote] = useState('')
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [selectedResume, setSelectedResume] = useState<string | null>(null)
@@ -81,25 +77,6 @@ export default function ApplicantDetailPage() {
     }
   }
 
-  const handleSave = async () => {
-    try {
-      const response = await fetch(`/api/applicants/${params.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editData),
-      })
-
-      if (response.ok) {
-        const updatedApplicant = await response.json()
-        setApplicant(updatedApplicant)
-        setIsEditing(false)
-      }
-    } catch (error) {
-      console.error('Error updating applicant:', error)
-    }
-  }
 
   const handleAddNote = async () => {
     if (!newNote.trim()) return
@@ -180,37 +157,6 @@ export default function ApplicantDetailPage() {
                 Back to Dashboard
               </Link>
             </div>
-            <div className="flex items-center space-x-4">
-              {!isEditing ? (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="flex items-center space-x-2 btn-secondary"
-                >
-                  <Edit className="w-4 h-4" />
-                  <span>Edit</span>
-                </button>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center space-x-2 btn-primary"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>Save</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsEditing(false)
-                      setEditData(applicant)
-                    }}
-                    className="flex items-center space-x-2 btn-secondary"
-                  >
-                    <X className="w-4 h-4" />
-                    <span>Cancel</span>
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </header>
@@ -225,73 +171,25 @@ export default function ApplicantDetailPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editData.applicant_name || ''}
-                      onChange={(e) => setEditData({ ...editData, applicant_name: e.target.value })}
-                      className="input-field"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{applicant.applicant_name || 'Not provided'}</p>
-                  )}
+                  <p className="text-gray-900">{applicant.applicant_name || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  {isEditing ? (
-                    <input
-                      type="email"
-                      value={editData.email || ''}
-                      onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                      className="input-field"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{applicant.email || 'Not provided'}</p>
-                  )}
+                  <p className="text-gray-900">{applicant.email || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      value={editData.year || ''}
-                      onChange={(e) => setEditData({ ...editData, year: parseInt(e.target.value) })}
-                      className="input-field"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{applicant.year || 'Not provided'}</p>
-                  )}
+                  <p className="text-gray-900">{applicant.year || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Major</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editData.major || ''}
-                      onChange={(e) => setEditData({ ...editData, major: e.target.value })}
-                      className="input-field"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{applicant.major || 'Not provided'}</p>
-                  )}
+                  <p className="text-gray-900">{applicant.major || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                  {isEditing ? (
-                    <select
-                      value={editData.status || ''}
-                      onChange={(e) => setEditData({ ...editData, status: e.target.value as 'Rejected' | 'Ongoing' })}
-                      className="input-field"
-                    >
-                      <option value="">Select Status</option>
-                      <option value="Ongoing">Ongoing</option>
-                      <option value="Rejected">Rejected</option>
-                    </select>
-                  ) : (
-                    <span className={`inline-flex px-2 py-1 rounded-full text-sm font-medium ${getStatusColor(applicant.status)}`}>
-                      {applicant.status || 'Not set'}
-                    </span>
-                  )}
+                  <span className={`inline-flex px-2 py-1 rounded-full text-sm font-medium ${getStatusColor(applicant.status)}`}>
+                    {applicant.status || 'Not set'}
+                  </span>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Applied Date</label>
@@ -329,31 +227,18 @@ export default function ApplicantDetailPage() {
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
                 {[1, 2, 3, 4, 5].map((day) => (
                   <div key={day} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
-                    {isEditing ? (
-                      <input
-                        type="checkbox"
-                        id={`day_${day}`}
-                        checked={!!editData[`day_${day}` as keyof Applicant]}
-                        onChange={(e) => setEditData({ 
-                          ...editData, 
-                          [`day_${day}` as keyof Applicant]: e.target.checked 
-                        })}
-                        className="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-                      />
-                    ) : (
-                      <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
-                        applicant[`day_${day}` as keyof Applicant]
-                          ? 'bg-primary-600 border-primary-600'
-                          : 'border-gray-300'
-                      }`}>
-                        {applicant[`day_${day}` as keyof Applicant] && (
-                          <Check className="w-3 h-3 text-white" />
-                        )}
-                      </div>
-                    )}
-                    <label htmlFor={`day_${day}`} className="text-sm font-medium text-gray-900 cursor-pointer">
+                    <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
+                      applicant[`day_${day}` as keyof Applicant]
+                        ? 'bg-primary-600 border-primary-600'
+                        : 'border-gray-300'
+                    }`}>
+                      {applicant[`day_${day}` as keyof Applicant] && (
+                        <Check className="w-3 h-3 text-white" />
+                      )}
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">
                       Day {day}
-                    </label>
+                    </span>
                   </div>
                 ))}
               </div>

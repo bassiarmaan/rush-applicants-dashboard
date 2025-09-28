@@ -11,6 +11,8 @@ export default function DashboardPage() {
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'Ongoing' | 'Rejected'>('all')
+  const [yearFilter, setYearFilter] = useState<'all' | '2024' | '2025' | '2026' | '2027' | '2028' | '2029'>('all')
+  const [sortBy, setSortBy] = useState<'name' | 'year' | 'date'>('name')
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const router = useRouter()
@@ -27,7 +29,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     filterApplicants()
-  }, [searchTerm, statusFilter, applicants])
+  }, [searchTerm, statusFilter, yearFilter, sortBy, applicants])
 
   const checkAuth = async () => {
     try {
@@ -72,6 +74,25 @@ export default function DashboardPage() {
     if (statusFilter !== 'all') {
       filtered = filtered.filter(applicant => applicant.status === statusFilter)
     }
+
+    // Filter by year
+    if (yearFilter !== 'all') {
+      filtered = filtered.filter(applicant => applicant.year?.toString() === yearFilter)
+    }
+
+    // Sort applicants
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return (a.applicant_name || '').localeCompare(b.applicant_name || '')
+        case 'year':
+          return (b.year || 0) - (a.year || 0) // Newest first
+        case 'date':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime() // Newest first
+        default:
+          return 0
+      }
+    })
 
     setFilteredApplicants(filtered)
   }
@@ -129,7 +150,7 @@ export default function DashboardPage() {
         {/* Search and Filters */}
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-            <div className="flex flex-col sm:flex-row gap-4 flex-1">
+            <div className="flex flex-col xl:flex-row gap-4 flex-1">
               <div className="flex-1 max-w-md">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -142,17 +163,45 @@ export default function DashboardPage() {
                   />
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Filter className="w-5 h-5 text-gray-400" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as 'all' | 'Ongoing' | 'Rejected')}
-                  className="input-field min-w-[120px]"
-                >
-                  <option value="all">All Status</option>
-                  <option value="Ongoing">Active</option>
-                  <option value="Rejected">Rejected</option>
-                </select>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex items-center space-x-2">
+                  <Filter className="w-5 h-5 text-gray-400" />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value as 'all' | 'Ongoing' | 'Rejected')}
+                    className="input-field min-w-[120px]"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="Ongoing">Active</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <select
+                    value={yearFilter}
+                    onChange={(e) => setYearFilter(e.target.value as 'all' | '2024' | '2025' | '2026' | '2027' | '2028' | '2029')}
+                    className="input-field min-w-[100px]"
+                  >
+                    <option value="all">All Years</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                  </select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as 'name' | 'year' | 'date')}
+                    className="input-field min-w-[120px]"
+                  >
+                    <option value="name">Sort by Name</option>
+                    <option value="year">Sort by Year</option>
+                    <option value="date">Sort by Date</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div className="flex items-center space-x-4 text-sm text-gray-600">
