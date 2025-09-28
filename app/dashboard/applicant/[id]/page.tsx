@@ -63,7 +63,6 @@ export default function ApplicantDetailPage() {
       if (applicantResponse.ok) {
         const applicantData = await applicantResponse.json()
         setApplicant(applicantData)
-        setEditData(applicantData)
       }
 
       if (interactionsResponse.ok) {
