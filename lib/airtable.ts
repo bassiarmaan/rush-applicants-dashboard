@@ -19,6 +19,7 @@ export interface Applicant {
   }>
   photo?: string
   notes?: string
+  notes_summary?: string
   status?: 'Rejected' | 'Ongoing'
   day_1?: boolean
   day_2?: boolean

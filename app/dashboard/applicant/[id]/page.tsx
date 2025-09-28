@@ -199,6 +199,16 @@ export default function ApplicantDetailPage() {
               </div>
             </div>
 
+            {/* AI Summary */}
+            {applicant.notes_summary && (
+              <div className="card">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6">AI Summary</h2>
+                <div className="bg-blue-50 p-4 rounded-md">
+                  <p className="text-gray-900 leading-relaxed">{applicant.notes_summary}</p>
+                </div>
+              </div>
+            )}
+
             {/* Essays */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Essays</h2>
@@ -297,13 +307,24 @@ export default function ApplicantDetailPage() {
             <div className="card">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Notes & Interactions</h3>
-                <button
-                  onClick={() => setIsAddingNote(true)}
-                  className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span className="text-sm">Add Note</span>
-                </button>
+                <div className="flex items-center space-x-3">
+                  {applicant.notes && (
+                    <button
+                      onClick={() => setShowExpandedNotes(!showExpandedNotes)}
+                      className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span className="text-sm">{showExpandedNotes ? 'Hide' : 'See'} Full Notes</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsAddingNote(true)}
+                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="text-sm">Add Note</span>
+                  </button>
+                </div>
               </div>
 
 
@@ -388,6 +409,14 @@ export default function ApplicantDetailPage() {
                 
                 {interactions.length === 0 && (
                   <p className="text-gray-500 text-sm">No notes yet</p>
+                )}
+                
+                {/* Full Notes Display */}
+                {showExpandedNotes && applicant.notes && (
+                  <div className="mt-6 p-4 bg-gray-50 rounded-md">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Complete Notes</h4>
+                    <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">{applicant.notes}</p>
+                  </div>
                 )}
               </div>
             </div>

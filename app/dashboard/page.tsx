@@ -29,13 +29,14 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated])
 
-  // Auto-refresh every 30 seconds
+  // Auto-refresh every 10 seconds
   useEffect(() => {
     if (!isAuthenticated) return
 
     const interval = setInterval(() => {
+      console.log('Auto-refresh triggered')
       fetchApplicants(true) // Silent refresh
-    }, 30000) // 30 seconds
+    }, 10000) // 10 seconds
 
     return () => clearInterval(interval)
   }, [isAuthenticated])
@@ -65,10 +66,20 @@ export default function DashboardPage() {
     }
 
     try {
-      const response = await fetch('/api/applicants')
+      // Add cache-busting parameter
+      const timestamp = new Date().getTime()
+      const response = await fetch(`/api/applicants?t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
+      
       if (response.ok) {
         const data = await response.json()
-        console.log(`Frontend: Received ${data.length} applicants from API`)
+        console.log(`Frontend: Received ${data.length} applicants from API at ${new Date().toLocaleTimeString()}`)
+        console.log('Frontend: Sample applicant names:', data.slice(0, 3).map((a: any) => a.applicant_name))
         setApplicants(data)
         setLastRefresh(new Date())
       } else {
@@ -250,7 +261,7 @@ export default function DashboardPage() {
               {isRefreshing && (
                 <span className="text-xs text-primary-600 flex items-center">
                   <RefreshCw className="w-3 h-3 animate-spin mr-1" />
-                  Updating...
+                  Checking for updates...
                 </span>
               )}
             </div>
@@ -278,52 +289,67 @@ export default function DashboardPage() {
                 href={`/dashboard/applicant/${applicant.id}`}
                 className="card hover:shadow-lg transition-shadow duration-200"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    {applicant.photo ? (
-                      <img
-                        src={applicant.photo}
-                        alt={applicant.applicant_name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-primary-600" />
+                {/* Centered Image */}
+                <div className="flex justify-center mb-6">
+                  {applicant.photo ? (
+                    <img
+                      src={applicant.photo}
+                      alt={applicant.applicant_name}
+                      className="w-48 h-48 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-48 h-48 bg-primary-100 rounded-full flex items-center justify-center">
+                      <User className="w-24 h-24 text-primary-600" />
+                    </div>
+                  )}
+                </div>
+
+                {/* All Information Below Image */}
+                <div className="text-center space-y-3">
+                  {/* Name and Status */}
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-gray-900 text-lg">
+                      {applicant.applicant_name || 'Unknown'}
+                    </h3>
+                    <p className="text-sm text-gray-600">Class of {applicant.year}</p>
+                    {applicant.status && (
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(applicant.status)}`}>
+                        {applicant.status}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Contact and Details */}
+                  <div className="space-y-2 text-left">
+                    {applicant.email && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Mail className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <span className="truncate">{applicant.email}</span>
                       </div>
                     )}
-                    <div>
-                      <h3 className="font-semibold text-gray-900">
-                        {applicant.applicant_name || 'Unknown'}
-                      </h3>
-                      <p className="text-sm text-gray-600">Class of {applicant.year}</p>
-                    </div>
-                  </div>
-                  {applicant.status && (
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(applicant.status)}`}>
-                      {applicant.status}
-                    </span>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  {applicant.email && (
+                    {applicant.major && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <FileText className="w-4 h-4 mr-2 flex-shrink-0" />
+                        <span>{applicant.major}</span>
+                      </div>
+                    )}
                     <div className="flex items-center text-sm text-gray-600">
-                      <Mail className="w-4 h-4 mr-2" />
-                      <span className="truncate">{applicant.email}</span>
+                      <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <span>Applied {new Date(applicant.created_at).toLocaleDateString()}</span>
                     </div>
-                  )}
-                  {applicant.major && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <FileText className="w-4 h-4 mr-2" />
-                      <span>{applicant.major}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    <span>Applied {new Date(applicant.created_at).toLocaleDateString()}</span>
+                    {applicant.notes_summary && (
+                      <div className="mt-3 p-3 bg-gray-50 rounded-md">
+                        <div className="flex items-start space-x-2">
+                          <FileText className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-xs font-medium text-gray-700 mb-1">AI Summary</p>
+                            <p className="text-sm text-gray-600">{applicant.notes_summary}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-
 
               </Link>
             ))}
