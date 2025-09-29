@@ -490,10 +490,60 @@ export default function ApplicantDetailPage() {
               </div>
             </div>
 
-            {/* Notes & Interactions - Desktop */}
+
+          </div>
+
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block space-y-8">
+            {/* Photo */}
+            {applicant.photo && (
+              <div className="card">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Photo</h3>
+                <img
+                  src={applicant.photo}
+                  alt={applicant.applicant_name}
+                  className="w-full h-64 object-cover rounded-md"
+                />
+              </div>
+            )}
+
+            {/* Resume */}
+            {applicant.resume && applicant.resume.length > 0 && (
+              <div className="card">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Resume</h3>
+                <div className="space-y-2">
+                  {applicant.resume.map((file, index) => (
+                    <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 rounded-md">
+                      <FileText className="w-5 h-5 text-gray-600" />
+                      <span className="text-sm text-gray-900 truncate flex-1">{file.filename}</span>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => setSelectedResume(file.url)}
+                          className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm"
+                        >
+                          <Eye className="w-4 h-4" />
+                          <span>View</span>
+                        </button>
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-1 text-gray-600 hover:text-gray-700 text-sm"
+                        >
+                          <Download className="w-4 h-4" />
+                          <span>Download</span>
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Notes & Interactions */}
             <div className="card">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Notes & Interactions</h2>
+                <h3 className="text-lg font-semibold text-gray-900">Notes & Interactions</h3>
                 <div className="flex items-center space-x-3">
                   {applicant.notes && (
                     <button
@@ -551,55 +601,6 @@ export default function ApplicantDetailPage() {
                 </div>
               )}
             </div>
-
-          </div>
-
-          {/* Desktop Sidebar */}
-          <div className="hidden lg:block space-y-8">
-            {/* Photo */}
-            {applicant.photo && (
-              <div className="card">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Photo</h3>
-                <img
-                  src={applicant.photo}
-                  alt={applicant.applicant_name}
-                  className="w-full h-64 object-cover rounded-md"
-                />
-              </div>
-            )}
-
-            {/* Resume */}
-            {applicant.resume && applicant.resume.length > 0 && (
-              <div className="card">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Resume</h3>
-                <div className="space-y-2">
-                  {applicant.resume.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 rounded-md">
-                      <FileText className="w-5 h-5 text-gray-600" />
-                      <span className="text-sm text-gray-900 truncate flex-1">{file.filename}</span>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => setSelectedResume(file.url)}
-                          className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm"
-                        >
-                          <Eye className="w-4 h-4" />
-                          <span>View</span>
-                        </button>
-                        <a
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center space-x-1 text-gray-600 hover:text-gray-700 text-sm"
-                        >
-                          <Download className="w-4 h-4" />
-                          <span>Download</span>
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* AI Summary */}
             {applicant.notes_summary && (
