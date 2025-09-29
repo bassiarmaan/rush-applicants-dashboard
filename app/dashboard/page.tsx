@@ -189,33 +189,33 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Rush Applicants Dashboard</h1>
-              <p className="text-sm text-gray-600">Manage and review rush applicants</p>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 sm:py-0 sm:h-16 gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">Rush Applicants Dashboard</h1>
+              <p className="text-sm text-gray-600 hidden sm:block">Manage and review rush applicants</p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
               <Link
                 href="/dashboard/leaderboard"
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center space-x-3 sm:space-x-4 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
               >
-                <Trophy className="w-5 h-5" />
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Leaderboard</span>
               </Link>
               <button
                 onClick={() => fetchApplicants()}
                 disabled={isRefreshing}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 disabled:opacity-50"
+                className="flex items-center space-x-3 sm:space-x-4 text-gray-600 hover:text-gray-900 disabled:opacity-50 text-sm sm:text-base"
               >
-                <RefreshCw className={`w-5 h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-4 h-4 sm:w-5 sm:h-5 ${isRefreshing ? 'animate-spin' : ''}`} />
                 <span>Refresh</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center space-x-3 sm:space-x-4 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
               >
-                <LogOut className="w-5 h-5" />
-                <span>Logout</span>
+                <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>Sign Out</span>
               </button>
             </div>
           </div>
@@ -225,76 +225,83 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search and Filters */}
         <div className="mb-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-            <div className="flex flex-col xl:flex-row gap-4 flex-1">
-              <div className="flex-1 max-w-md">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="Search applicants by name, email, or major..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="input-field pl-10"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex items-center space-x-2">
-                  <Filter className="w-5 h-5 text-gray-400" />
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value as 'all' | 'Ongoing' | 'Rejected')}
-                    className="input-field min-w-[120px]"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="Ongoing">Active</option>
-                    <option value="Rejected">Rejected</option>
-                  </select>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <select
-                    value={yearFilter}
-                    onChange={(e) => setYearFilter(e.target.value as 'all' | '2024' | '2025' | '2026' | '2027' | '2028' | '2029')}
-                    className="input-field min-w-[100px]"
-                  >
-                    <option value="all">All Years</option>
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028</option>
-                    <option value="2029">2029</option>
-                  </select>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'name' | 'year' | 'date' | 'elo')}
-                    className="input-field min-w-[120px]"
-                  >
-                    <option value="name">Sort by Name</option>
-                    <option value="year">Sort by Year</option>
-                    <option value="date">Sort by Date</option>
-                    <option value="elo">Sort by ELO</option>
-                  </select>
-                </div>
+          <div className="flex flex-col gap-4">
+            {/* Search Bar */}
+            <div className="w-full">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search by name, email, or major..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="input-field pl-10 w-full"
+                />
               </div>
             </div>
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <span>Total: {applicants.length}</span>
-              <span>Filtered: {filteredApplicants.length}</span>
-              {lastRefresh && (
-                <span className="text-xs text-gray-500">
-                  Last updated: {lastRefresh.toLocaleTimeString()}
-                </span>
-              )}
-              {isRefreshing && (
-                <span className="text-xs text-primary-600 flex items-center">
-                  <RefreshCw className="w-3 h-3 animate-spin mr-1" />
-                  Checking for updates...
-                </span>
-              )}
+            
+            {/* Filters Row */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex items-center space-x-2">
+                <Filter className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as 'all' | 'Ongoing' | 'Rejected')}
+                  className="input-field flex-1 sm:min-w-[120px]"
+                >
+                  <option value="all">All Status</option>
+                  <option value="Ongoing">Active</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <select
+                  value={yearFilter}
+                  onChange={(e) => setYearFilter(e.target.value as 'all' | '2024' | '2025' | '2026' | '2027' | '2028' | '2029')}
+                  className="input-field flex-1 sm:min-w-[100px]"
+                >
+                  <option value="all">All Years</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                  <option value="2027">2027</option>
+                  <option value="2028">2028</option>
+                  <option value="2029">2029</option>
+                </select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'name' | 'year' | 'date' | 'elo')}
+                  className="input-field flex-1 sm:min-w-[120px]"
+                >
+                  <option value="name">Sort by Name</option>
+                  <option value="year">Sort by Year</option>
+                  <option value="date">Sort by Date</option>
+                  <option value="elo">Sort by ELO</option>
+                </select>
+              </div>
+            </div>
+            
+            {/* Stats Row */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-gray-600">
+              <div className="flex items-center space-x-4">
+                <span>Total: {applicants.length}</span>
+                <span>Filtered: {filteredApplicants.length}</span>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+                {lastRefresh && (
+                  <span className="text-xs text-gray-500">
+                    Last updated: {lastRefresh.toLocaleTimeString()}
+                  </span>
+                )}
+                {isRefreshing && (
+                  <span className="text-xs text-primary-600 flex items-center">
+                    <RefreshCw className="w-3 h-3 animate-spin mr-1" />
+                    Checking for updates...
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
