@@ -80,10 +80,31 @@ export default function DashboardPage() {
         const data = await response.json()
         console.log(`Frontend: Received ${data.length} applicants from API at ${new Date().toLocaleTimeString()}`)
         console.log('Frontend: Sample applicant names:', data.slice(0, 3).map((a: any) => a.applicant_name))
+        
+        // Log ELO and weight statistics
+        const eloCount = data.filter((a: any) => a.elo !== undefined && a.elo !== null).length
+        const weightCount = data.filter((a: any) => a.weight !== undefined && a.weight !== null).length
+        console.log(`Frontend: ELO ratings found: ${eloCount}/${data.length}`)
+        console.log(`Frontend: Weight values found: ${weightCount}/${data.length}`)
+        
+        // Log sample data structure
+        if (data.length > 0) {
+          const sample = data[0]
+          console.log('Frontend: Sample applicant data structure:', {
+            has_elo: !!sample.elo,
+            has_weight: !!sample.weight,
+            elo: sample.elo,
+            weight: sample.weight,
+            availableFields: Object.keys(sample)
+          })
+        }
+        
         setApplicants(data)
         setLastRefresh(new Date())
       } else {
         console.error('API response not ok:', response.status, response.statusText)
+        const errorData = await response.json().catch(() => ({}))
+        console.error('API error details:', errorData)
       }
     } catch (error) {
       console.error('Error fetching applicants:', error)

@@ -45,13 +45,30 @@ export default function LeaderboardPage() {
   const fetchApplicants = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch('/api/applicants')
+      // Add cache-busting parameter
+      const timestamp = new Date().getTime()
+      const response = await fetch(`/api/applicants?t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
+      
       if (response.ok) {
         const data = await response.json()
+        console.log(`Leaderboard: Received ${data.length} applicants`)
+        
+        // Log ELO statistics
+        const eloCount = data.filter((a: any) => a.elo !== undefined && a.elo !== null).length
+        console.log(`Leaderboard: ELO ratings found: ${eloCount}/${data.length}`)
+        
         setApplicants(data)
+      } else {
+        console.error('Leaderboard API response not ok:', response.status, response.statusText)
       }
     } catch (error) {
-      console.error('Error fetching applicants:', error)
+      console.error('Error fetching applicants for leaderboard:', error)
     } finally {
       setIsLoading(false)
     }
