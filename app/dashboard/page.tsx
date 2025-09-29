@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Search, User, Mail, Calendar, FileText, LogOut, Plus, Filter, Check, RefreshCw } from 'lucide-react'
+import { Search, User, Mail, Calendar, FileText, LogOut, Plus, Filter, Check, RefreshCw, Trophy } from 'lucide-react'
 import { Applicant } from '@/lib/airtable'
 
 export default function DashboardPage() {
@@ -12,7 +12,7 @@ export default function DashboardPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'Ongoing' | 'Rejected'>('all')
   const [yearFilter, setYearFilter] = useState<'all' | '2024' | '2025' | '2026' | '2027' | '2028' | '2029'>('all')
-  const [sortBy, setSortBy] = useState<'name' | 'year' | 'date'>('name')
+  const [sortBy, setSortBy] = useState<'name' | 'year' | 'date' | 'elo'>('name')
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -124,6 +124,8 @@ export default function DashboardPage() {
           return (b.year || 0) - (a.year || 0) // Newest first
         case 'date':
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime() // Newest first
+        case 'elo':
+          return (b.elo || 0) - (a.elo || 0) // Highest ELO first
         default:
           return 0
       }
@@ -172,6 +174,13 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-600">Manage and review rush applicants</p>
             </div>
             <div className="flex items-center space-x-4">
+              <Link
+                href="/dashboard/leaderboard"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              >
+                <Trophy className="w-5 h-5" />
+                <span>Leaderboard</span>
+              </Link>
               <button
                 onClick={() => fetchApplicants()}
                 disabled={isRefreshing}
@@ -240,12 +249,13 @@ export default function DashboardPage() {
                 <div className="flex items-center space-x-2">
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'name' | 'year' | 'date')}
+                    onChange={(e) => setSortBy(e.target.value as 'name' | 'year' | 'date' | 'elo')}
                     className="input-field min-w-[120px]"
                   >
                     <option value="name">Sort by Name</option>
                     <option value="year">Sort by Year</option>
                     <option value="date">Sort by Date</option>
+                    <option value="elo">Sort by ELO</option>
                   </select>
                 </div>
               </div>

@@ -207,6 +207,12 @@ export default function ApplicantDetailPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Applied Date</label>
                   <p className="text-gray-900">{new Date(applicant.created_at).toLocaleDateString()}</p>
                 </div>
+                {applicant.elo && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ELO Rating</label>
+                    <p className="text-gray-900 font-semibold">{applicant.elo}</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -364,7 +370,13 @@ export default function ApplicantDetailPage() {
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Rush Days</h2>
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-                {[1, 2, 3, 4, 5].map((day) => (
+                {[
+                  { day: 1, label: 'Monday' },
+                  { day: 2, label: 'Tuesday' },
+                  { day: 3, label: 'Wednesday' },
+                  { day: 4, label: 'Thursday' },
+                  { day: 5, label: 'Friday' }
+                ].map(({ day, label }) => (
                   <div key={day} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
                     <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
                       applicant[`day_${day}` as keyof Applicant]
@@ -376,7 +388,7 @@ export default function ApplicantDetailPage() {
                       )}
                     </div>
                     <span className="text-sm font-medium text-gray-900">
-                      Day {day}
+                      {label}
                     </span>
                   </div>
                 ))}
@@ -478,6 +490,12 @@ export default function ApplicantDetailPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Applied Date</label>
                   <p className="text-gray-900">{new Date(applicant.created_at).toLocaleDateString()}</p>
                 </div>
+                {applicant.elo && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ELO Rating</label>
+                    <p className="text-gray-900 font-semibold">{applicant.elo}</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -485,7 +503,13 @@ export default function ApplicantDetailPage() {
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Rush Days</h2>
               <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-                {[1, 2, 3, 4, 5].map((day) => (
+                {[
+                  { day: 1, label: 'Monday' },
+                  { day: 2, label: 'Tuesday' },
+                  { day: 3, label: 'Wednesday' },
+                  { day: 4, label: 'Thursday' },
+                  { day: 5, label: 'Friday' }
+                ].map(({ day, label }) => (
                   <div key={day} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
                     <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
                       applicant[`day_${day}` as keyof Applicant]
@@ -497,7 +521,7 @@ export default function ApplicantDetailPage() {
                       )}
                     </div>
                     <span className="text-sm font-medium text-gray-900">
-                      Day {day}
+                      {label}
                     </span>
                   </div>
                 ))}
