@@ -395,67 +395,6 @@ export default function ApplicantDetailPage() {
               </div>
             </div>
 
-            {/* Notes & Interactions */}
-            <div className="card">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Notes & Interactions</h2>
-                <div className="flex items-center space-x-3">
-                  {applicant.notes && (
-                    <button
-                      onClick={() => setShowExpandedNotes(!showExpandedNotes)}
-                      className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span className="text-sm">{showExpandedNotes ? 'Hide' : 'See'} Full Notes</span>
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setIsAddingNote(true)}
-                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="text-sm">Add Note</span>
-                  </button>
-                </div>
-              </div>
-
-              {isAddingNote && (
-                <div className="mb-4 p-4 bg-gray-50 rounded-md">
-                  <textarea
-                    value={newNote}
-                    onChange={(e) => setNewNote(e.target.value)}
-                    placeholder="Add a note about this applicant..."
-                    className="w-full p-2 border border-gray-300 rounded-md resize-none"
-                    rows={3}
-                  />
-                  <div className="flex justify-end space-x-2 mt-2">
-                    <button
-                      onClick={() => {
-                        setIsAddingNote(false)
-                        setNewNote('')
-                      }}
-                      className="btn-secondary text-sm"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleAddNote}
-                      className="btn-primary text-sm"
-                    >
-                      Add Note
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Full Notes Display */}
-              {showExpandedNotes && applicant.notes && (
-                <div className="mt-6 p-4 bg-gray-50 rounded-md">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Complete Notes</h4>
-                  <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">{applicant.notes}</p>
-                </div>
-              )}
-            </div>
           </div>
 
           {/* Desktop Layout - Two Column */}
@@ -549,6 +488,68 @@ export default function ApplicantDetailPage() {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Notes & Interactions - Desktop */}
+            <div className="card">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Notes & Interactions</h2>
+                <div className="flex items-center space-x-3">
+                  {applicant.notes && (
+                    <button
+                      onClick={() => setShowExpandedNotes(!showExpandedNotes)}
+                      className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span className="text-sm">{showExpandedNotes ? 'Hide' : 'See'} Full Notes</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsAddingNote(true)}
+                    className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="text-sm">Add Note</span>
+                  </button>
+                </div>
+              </div>
+
+              {isAddingNote && (
+                <div className="mb-4 p-4 bg-gray-50 rounded-md">
+                  <textarea
+                    value={newNote}
+                    onChange={(e) => setNewNote(e.target.value)}
+                    placeholder="Add a note about this applicant..."
+                    className="w-full p-2 border border-gray-300 rounded-md resize-none"
+                    rows={3}
+                  />
+                  <div className="flex justify-end space-x-2 mt-2">
+                    <button
+                      onClick={() => {
+                        setIsAddingNote(false)
+                        setNewNote('')
+                      }}
+                      className="btn-secondary text-sm"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAddNote}
+                      className="btn-primary text-sm"
+                    >
+                      Add Note
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Full Notes Display */}
+              {showExpandedNotes && applicant.notes && (
+                <div className="mt-6 p-4 bg-gray-50 rounded-md">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Complete Notes</h4>
+                  <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">{applicant.notes}</p>
+                </div>
+              )}
             </div>
 
           </div>
