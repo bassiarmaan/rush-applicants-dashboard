@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AirtableAPI } from '@/lib/airtable'
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 VERCEL DEBUG: Starting comprehensive debug check...')
@@ -113,10 +116,10 @@ export async function GET(request: NextRequest) {
     const deploymentInfo = {
       timestamp: new Date().toISOString(),
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      userAgent: request.headers.get('user-agent'),
-      cacheControl: request.headers.get('cache-control'),
-      ifModifiedSince: request.headers.get('if-modified-since'),
-      etag: request.headers.get('etag')
+      userAgent: request.headers.get('user-agent') || 'Unknown',
+      cacheControl: request.headers.get('cache-control') || 'Not set',
+      ifModifiedSince: request.headers.get('if-modified-since') || 'Not set',
+      etag: request.headers.get('etag') || 'Not set'
     }
 
     const response = NextResponse.json({
