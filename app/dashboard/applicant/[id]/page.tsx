@@ -26,6 +26,8 @@ export default function ApplicantDetailPage() {
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [selectedResume, setSelectedResume] = useState<string | null>(null)
   const [showExpandedNotes, setShowExpandedNotes] = useState(false)
+  const [showEssay1, setShowEssay1] = useState(false)
+  const [showEssay2, setShowEssay2] = useState(false)
   
   const router = useRouter()
   const params = useParams()
@@ -241,40 +243,52 @@ export default function ApplicantDetailPage() {
               </div>
             )}
 
-            {/* Rush Days - Mobile Fourth */}
+            {/* Essays - Mobile Fourth */}
             <div className="card">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Rush Days</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
-                {[1, 2, 3, 4, 5].map((day) => (
-                  <div key={day} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
-                    <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
-                      applicant[`day_${day}` as keyof Applicant]
-                        ? 'bg-primary-600 border-primary-600'
-                        : 'border-gray-300'
-                    }`}>
-                      {applicant[`day_${day}` as keyof Applicant] && (
-                        <Check className="w-3 h-3 text-white" />
-                      )}
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Essays</h2>
+              <div className="space-y-6">
+                {applicant.essay_1 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">Essay 1</label>
+                      <button
+                        onClick={() => setShowEssay1(!showEssay1)}
+                        className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm"
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span>{showEssay1 ? 'Hide' : 'Show'} Answer</span>
+                      </button>
                     </div>
-                    <span className="text-sm font-medium text-gray-900">
-                      Day {day}
-                    </span>
+                    {showEssay1 && (
+                      <div className="bg-gray-50 p-4 rounded-md">
+                        <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_1}</p>
+                      </div>
+                    )}
                   </div>
-                ))}
+                )}
+                {applicant.essay_2 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">Essay 2</label>
+                      <button
+                        onClick={() => setShowEssay2(!showEssay2)}
+                        className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm"
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span>{showEssay2 ? 'Hide' : 'Show'} Answer</span>
+                      </button>
+                    </div>
+                    {showEssay2 && (
+                      <div className="bg-gray-50 p-4 rounded-md">
+                        <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_2}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* AI Summary - Mobile Fifth */}
-            {applicant.notes_summary && (
-              <div className="card">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Summary</h3>
-                <div className="bg-blue-50 p-4 rounded-md">
-                  <p className="text-gray-900 leading-relaxed text-sm">{applicant.notes_summary}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Notes & Interactions - Mobile Sixth */}
+            {/* Notes & Interactions - Mobile Fifth */}
             <div className="card">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-gray-900">Notes & Interactions</h2>
@@ -336,62 +350,36 @@ export default function ApplicantDetailPage() {
               )}
             </div>
 
-            {/* Essays - Mobile Last */}
-            <div className="card">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Essays</h2>
-              <div className="space-y-6">
-                {applicant.essay_1 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 1</label>
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_1}</p>
-                    </div>
-                  </div>
-                )}
-                {applicant.essay_2 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 2</label>
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_2}</p>
-                    </div>
-                  </div>
-                )}
+            {/* AI Summary - Mobile Sixth */}
+            {applicant.notes_summary && (
+              <div className="card">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Summary</h3>
+                <div className="bg-blue-50 p-4 rounded-md">
+                  <p className="text-gray-900 leading-relaxed text-sm">{applicant.notes_summary}</p>
+                </div>
               </div>
-            </div>
-          </div>
+            )}
 
-          {/* Desktop Layout - Two Column */}
-          <div className="hidden lg:block lg:col-span-2 space-y-8">
-            {/* Basic Information */}
+            {/* Rush Days - Mobile Last */}
             <div className="card">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Basic Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                  <p className="text-gray-900">{applicant.applicant_name || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                  <p className="text-gray-900">{applicant.email || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
-                  <p className="text-gray-900">{applicant.year || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Major</label>
-                  <p className="text-gray-900">{applicant.major || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                  <span className={`inline-flex px-2 py-1 rounded-full text-sm font-medium ${getStatusColor(applicant.status)}`}>
-                    {applicant.status || 'Not set'}
-                  </span>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Applied Date</label>
-                  <p className="text-gray-900">{new Date(applicant.created_at).toLocaleDateString()}</p>
-                </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Rush Days</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+                {[1, 2, 3, 4, 5].map((day) => (
+                  <div key={day} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+                    <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
+                      applicant[`day_${day}` as keyof Applicant]
+                        ? 'bg-primary-600 border-primary-600'
+                        : 'border-gray-300'
+                    }`}>
+                      {applicant[`day_${day}` as keyof Applicant] && (
+                        <Check className="w-3 h-3 text-white" />
+                      )}
+                    </div>
+                    <span className="text-sm font-medium text-gray-900">
+                      Day {day}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -456,27 +444,40 @@ export default function ApplicantDetailPage() {
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Essays */}
+          {/* Desktop Layout - Two Column */}
+          <div className="hidden lg:block lg:col-span-2 space-y-8">
+            {/* Basic Information */}
             <div className="card">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Essays</h2>
-              <div className="space-y-6">
-                {applicant.essay_1 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 1</label>
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_1}</p>
-                    </div>
-                  </div>
-                )}
-                {applicant.essay_2 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 2</label>
-                    <div className="bg-gray-50 p-4 rounded-md">
-                      <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_2}</p>
-                    </div>
-                  </div>
-                )}
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Basic Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <p className="text-gray-900">{applicant.applicant_name || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <p className="text-gray-900">{applicant.email || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                  <p className="text-gray-900">{applicant.year || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Major</label>
+                  <p className="text-gray-900">{applicant.major || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <span className={`inline-flex px-2 py-1 rounded-full text-sm font-medium ${getStatusColor(applicant.status)}`}>
+                    {applicant.status || 'Not set'}
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Applied Date</label>
+                  <p className="text-gray-900">{new Date(applicant.created_at).toLocaleDateString()}</p>
+                </div>
               </div>
             </div>
 
@@ -500,6 +501,29 @@ export default function ApplicantDetailPage() {
                     </span>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Essays */}
+            <div className="card">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Essays</h2>
+              <div className="space-y-6">
+                {applicant.essay_1 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 1</label>
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_1}</p>
+                    </div>
+                  </div>
+                )}
+                {applicant.essay_2 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 2</label>
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_2}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -554,14 +578,14 @@ export default function ApplicantDetailPage() {
 
             {/* AI Summary */}
             {applicant.notes_summary && (
-              <div className="card">
+            <div className="card">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">AI Summary</h3>
                 <div className="bg-blue-50 p-4 rounded-md">
                   <p className="text-gray-900 leading-relaxed text-sm">{applicant.notes_summary}</p>
                 </div>
-              </div>
-            )}
-
+                  </div>
+                )}
+                
           </div>
         </div>
 
