@@ -5,7 +5,27 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    font-family: 'Courier Prime', monospace;
+  }
+  
   html {
+    font-family: 'Courier Prime', monospace;
+  }
+  
+  body {
+    font-family: 'Courier Prime', monospace;
+  }
+  
+  input, textarea, select, button {
+    font-family: 'Courier Prime', monospace;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Courier Prime', monospace;
+  }
+  
+  p, span, div, a, li, td, th {
     font-family: 'Courier Prime', monospace;
   }
 }
