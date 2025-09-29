@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Trophy, TrendingUp, TrendingDown, LogOut } from 'lucide-react'
 import { Applicant } from '@/lib/airtable'
 
-export default function LeaderboardPage() {
+export default function RankingsPage() {
   const [applicants, setApplicants] = useState<Applicant[]>([])
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -57,18 +57,18 @@ export default function LeaderboardPage() {
       
       if (response.ok) {
         const data = await response.json()
-        console.log(`Leaderboard: Received ${data.length} applicants`)
+        console.log(`Rankings: Received ${data.length} applicants`)
         
         // Log ELO statistics
         const eloCount = data.filter((a: any) => a.elo !== undefined && a.elo !== null).length
-        console.log(`Leaderboard: ELO ratings found: ${eloCount}/${data.length}`)
+        console.log(`Rankings: ELO ratings found: ${eloCount}/${data.length}`)
         
         setApplicants(data)
       } else {
-        console.error('Leaderboard API response not ok:', response.status, response.statusText)
+        console.error('Rankings API response not ok:', response.status, response.statusText)
       }
     } catch (error) {
-      console.error('Error fetching applicants for leaderboard:', error)
+      console.error('Error fetching applicants for rankings:', error)
     } finally {
       setIsLoading(false)
     }
@@ -130,7 +130,7 @@ export default function LeaderboardPage() {
                 Back to Dashboard
               </Link>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">ELO Leaderboard</h1>
+                <h1 className="text-2xl font-bold text-gray-900">ELO Pre Lim Rankings</h1>
                 <p className="text-sm text-gray-600">Rankings by ELO rating</p>
               </div>
             </div>
@@ -147,7 +147,7 @@ export default function LeaderboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Leaderboard Table */}
+        {/* Rankings Table */}
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <div className="w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full animate-spin" />
@@ -161,7 +161,7 @@ export default function LeaderboardPage() {
         ) : (
           <div className="bg-white shadow-sm rounded-lg overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">ELO Rankings</h2>
+              <h2 className="text-lg font-semibold text-gray-900">ELO Pre Lim Rankings</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">

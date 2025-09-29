@@ -200,7 +200,7 @@ export default function DashboardPage() {
                 className="flex items-center space-x-3 sm:space-x-4 text-gray-600 hover:text-gray-900 text-sm sm:text-base"
               >
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>Leaderboard</span>
+                <span>Pre Lim Rankings</span>
               </Link>
               <button
                 onClick={() => fetchApplicants()}
