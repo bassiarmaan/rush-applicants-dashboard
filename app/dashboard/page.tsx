@@ -368,13 +368,13 @@ export default function DashboardPage() {
                       <Calendar className="w-4 h-4 mr-2 flex-shrink-0" />
                       <span>Applied {new Date(applicant.created_at).toLocaleDateString()}</span>
                     </div>
-                    {applicant.notes_summary && (
+                    {applicant.notes && (
                       <div className="mt-3 p-3 bg-gray-50 rounded-md">
                         <div className="flex items-start space-x-2">
                           <FileText className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
                           <div>
-                            <p className="text-xs font-medium text-gray-700 mb-1">AI Summary</p>
-                            <p className="text-sm text-gray-600">{applicant.notes_summary}</p>
+                            <p className="text-xs font-medium text-gray-700 mb-1">Notes</p>
+                            <p className="text-sm text-gray-600 line-clamp-3">{applicant.notes}</p>
                           </div>
                         </div>
                       </div>
