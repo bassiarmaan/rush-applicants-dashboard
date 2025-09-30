@@ -112,8 +112,10 @@ export default function ApplicantDetailPage() {
         return 'bg-red-100 text-red-800'
       case 'Ongoing':
         return 'bg-yellow-100 text-yellow-800'
+      case 'Applied':
+        return 'bg-green-100 text-green-800'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-red-100 text-red-800' // Not Applied or no status = red
     }
   }
 

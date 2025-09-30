@@ -238,7 +238,9 @@ export default function RankingsPage() {
                             ? 'bg-red-100 text-red-800'
                             : applicant.status === 'Ongoing'
                             ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
+                            : applicant.status === 'Applied'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800' // Not Applied or no status = red
                         }`}>
                           {applicant.status || 'Not set'}
                         </span>
