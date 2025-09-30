@@ -25,9 +25,10 @@ export default function ApplicantDetailPage() {
   const [newNote, setNewNote] = useState('')
   const [isAddingNote, setIsAddingNote] = useState(false)
   const [selectedResume, setSelectedResume] = useState<string | null>(null)
-  const [showExpandedNotes, setShowExpandedNotes] = useState(false)
+  const [showExpandedNotes, setShowExpandedNotes] = useState(true)
   const [showEssay1, setShowEssay1] = useState(false)
   const [showEssay2, setShowEssay2] = useState(false)
+  const [showEssay3, setShowEssay3] = useState(false)
   
   const router = useRouter()
   const params = useParams()
@@ -256,7 +257,7 @@ export default function ApplicantDetailPage() {
                 {applicant.essay_1 && (
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-sm font-medium text-gray-700">Essay 1</label>
+                      <label className="block text-sm font-medium text-gray-700">Why SEP?</label>
                       <button
                         onClick={() => setShowEssay1(!showEssay1)}
                         className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm"
@@ -275,7 +276,7 @@ export default function ApplicantDetailPage() {
                 {applicant.essay_2 && (
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-sm font-medium text-gray-700">Essay 2</label>
+                      <label className="block text-sm font-medium text-gray-700">What drives you when you wake up in the morning?</label>
                       <button
                         onClick={() => setShowEssay2(!showEssay2)}
                         className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm"
@@ -287,6 +288,25 @@ export default function ApplicantDetailPage() {
                     {showEssay2 && (
                       <div className="bg-gray-50 p-4 rounded-md">
                         <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_2}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {applicant.essay_3 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">Essay 3</label>
+                      <button
+                        onClick={() => setShowEssay3(!showEssay3)}
+                        className="flex items-center space-x-1 text-primary-600 hover:text-primary-700 text-sm"
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span>{showEssay3 ? 'Hide' : 'Show'} Answer</span>
+                      </button>
+                    </div>
+                    {showEssay3 && (
+                      <div className="bg-gray-50 p-4 rounded-md">
+                        <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_3}</p>
                       </div>
                     )}
                   </div>
@@ -305,7 +325,7 @@ export default function ApplicantDetailPage() {
                       className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
                     >
                       <Eye className="w-4 h-4" />
-                      <span className="text-sm">{showExpandedNotes ? 'Hide' : 'See'} Full Notes</span>
+                      <span className="text-sm">{showExpandedNotes ? 'See Less' : 'See Full Notes'}</span>
                     </button>
                   )}
                   <button
@@ -473,7 +493,7 @@ export default function ApplicantDetailPage() {
               <div className="space-y-6">
                 {applicant.essay_1 && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 1</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Why SEP?</label>
                     <div className="bg-gray-50 p-4 rounded-md">
                       <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_1}</p>
                     </div>
@@ -481,9 +501,17 @@ export default function ApplicantDetailPage() {
                 )}
                 {applicant.essay_2 && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Essay 2</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">What drives you when you wake up in the morning?</label>
                     <div className="bg-gray-50 p-4 rounded-md">
                       <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_2}</p>
+                    </div>
+                  </div>
+                )}
+                {applicant.essay_3 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Describe yourself in 3 words.</label>
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <p className="text-gray-900 whitespace-pre-wrap">{applicant.essay_3}</p>
                     </div>
                   </div>
                 )}
@@ -551,7 +579,7 @@ export default function ApplicantDetailPage() {
                       className="flex items-center space-x-1 text-primary-600 hover:text-primary-700"
                     >
                       <Eye className="w-4 h-4" />
-                      <span className="text-sm">{showExpandedNotes ? 'Hide' : 'See'} Full Notes</span>
+                      <span className="text-sm">{showExpandedNotes ? 'See Less' : 'See Full Notes'}</span>
                     </button>
                   )}
                   <button

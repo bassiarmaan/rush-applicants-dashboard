@@ -10,6 +10,7 @@ export interface Applicant {
   major: string
   essay_1?: string
   essay_2?: string
+  essay_3?: string
   resume?: Array<{
     id: string
     url: string
