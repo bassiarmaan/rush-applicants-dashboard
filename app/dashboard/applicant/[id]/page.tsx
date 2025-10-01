@@ -108,14 +108,14 @@ export default function ApplicantDetailPage() {
 
   const getStatusColor = (status?: string) => {
     switch (status) {
-      case 'Rejected':
-        return 'bg-red-100 text-red-800'
-      case 'Ongoing':
-        return 'bg-yellow-100 text-yellow-800'
       case 'Applied':
         return 'bg-green-100 text-green-800'
+      case 'Rejected':
+        return 'bg-red-100 text-red-800'
+      case 'Not Applied':
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-red-100 text-red-800' // Not Applied or no status = red
+        return 'bg-red-100 text-red-800' // No status = red (Not Applied)
     }
   }
 

@@ -10,7 +10,7 @@ export default function DashboardPage() {
   const [applicants, setApplicants] = useState<Applicant[]>([])
   const [filteredApplicants, setFilteredApplicants] = useState<Applicant[]>([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'Ongoing' | 'Rejected'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'Not Applied' | 'Applied' | 'Rejected'>('all')
   const [yearFilter, setYearFilter] = useState<'all' | '2024' | '2025' | '2026' | '2027' | '2028' | '2029'>('all')
   const [sortBy, setSortBy] = useState<'name' | 'year' | 'date' | 'elo'>('name')
   const [isLoading, setIsLoading] = useState(true)
@@ -128,7 +128,12 @@ export default function DashboardPage() {
 
     // Filter by status
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(applicant => applicant.status === statusFilter)
+      filtered = filtered.filter(applicant => {
+        if (statusFilter === 'Not Applied') {
+          return !applicant.status || applicant.status === 'Not Applied'
+        }
+        return applicant.status === statusFilter
+      })
     }
 
     // Filter by year
@@ -167,14 +172,14 @@ export default function DashboardPage() {
 
   const getStatusColor = (status?: string) => {
     switch (status) {
-      case 'Rejected':
-        return 'bg-red-100 text-red-800'
-      case 'Ongoing':
-        return 'bg-yellow-100 text-yellow-800'
       case 'Applied':
         return 'bg-green-100 text-green-800'
+      case 'Rejected':
+        return 'bg-red-100 text-red-800'
+      case 'Not Applied':
+        return 'bg-red-100 text-red-800'
       default:
-        return 'bg-red-100 text-red-800' // Not Applied or no status = red
+        return 'bg-red-100 text-red-800' // No status = red (Not Applied)
     }
   }
 
@@ -248,11 +253,12 @@ export default function DashboardPage() {
                 <Filter className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as 'all' | 'Ongoing' | 'Rejected')}
+                  onChange={(e) => setStatusFilter(e.target.value as 'all' | 'Not Applied' | 'Applied' | 'Rejected')}
                   className="input-field flex-1 sm:min-w-[120px]"
                 >
                   <option value="all">All Status</option>
-                  <option value="Ongoing">Active</option>
+                  <option value="Not Applied">Not Applied</option>
+                  <option value="Applied">Applied</option>
                   <option value="Rejected">Rejected</option>
                 </select>
               </div>

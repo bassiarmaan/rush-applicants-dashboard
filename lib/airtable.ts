@@ -23,7 +23,7 @@ export interface Applicant {
   notes_summary?: string
   elo?: number
   weight?: number
-  status?: 'Rejected' | 'Ongoing'
+  status?: 'Not Applied' | 'Applied' | 'Rejected'
   day_1?: boolean
   day_2?: boolean
   day_3?: boolean
