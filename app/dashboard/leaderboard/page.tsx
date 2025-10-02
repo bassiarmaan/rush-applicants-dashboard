@@ -45,9 +45,13 @@ export default function RankingsPage() {
   const fetchApplicants = async () => {
     setIsLoading(true)
     try {
-      // Add cache-busting parameter
-      const timestamp = new Date().getTime()
-      const response = await fetch(`/api/applicants?t=${timestamp}`, {
+        // Add cache-busting parameter and filter for Applied status only
+        const timestamp = new Date().getTime()
+        const FIELD_NAME = 'status'
+        const FIELD_VALUE = 'Applied'
+        const filterFormula = encodeURIComponent(`${FIELD_NAME}="${FIELD_VALUE}"`)
+        console.log("Leaderboard: Fetching only Applied applicants with filter formula: ", filterFormula)
+        const response = await fetch(`/api/applicants?filterByFormula=${filterFormula}&t=${timestamp}`, {
         cache: 'no-store',
         headers: {
           'Cache-Control': 'no-cache',
@@ -57,6 +61,7 @@ export default function RankingsPage() {
       
       if (response.ok) {
         const data = await response.json()
+        console.log("data: ", data)
         console.log(`Rankings: Received ${data.length} applicants`)
         
         // Log ELO statistics

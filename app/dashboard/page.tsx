@@ -329,11 +329,13 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredApplicants.map((applicant) => (
+            {filteredApplicants.map((applicant) => {
+              const isApplied = applicant.status === 'Applied'
+              return (
               <Link
                 key={applicant.id}
                 href={`/dashboard/applicant/${applicant.id}`}
-                className="card hover:shadow-lg transition-shadow duration-200"
+                className={`card hover:shadow-lg transition-shadow duration-200 ${!isApplied ? 'opacity-50 grayscale' : ''}`}
               >
                 {/* Centered Image */}
                 <div className="flex justify-center mb-6">
@@ -398,7 +400,8 @@ export default function DashboardPage() {
                 </div>
 
               </Link>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

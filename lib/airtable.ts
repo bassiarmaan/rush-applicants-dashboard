@@ -56,13 +56,16 @@ export class AirtableAPI {
     }
   }
 
-  async getApplicants(): Promise<Applicant[]> {
+  async getApplicants(filterByFormula?: string): Promise<Applicant[]> {
     try {
       const allRecords: Applicant[] = []
       let offset: string | undefined
 
       do {
         let url = `${this.baseUrl}/Applicants?pageSize=100`
+        if (filterByFormula) {
+          url += `&filterByFormula=${encodeURIComponent(filterByFormula)}`
+        }
         if (offset) {
           url += `&offset=${offset}`
         }

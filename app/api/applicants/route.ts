@@ -13,7 +13,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Get filter parameters from URL
+    const { searchParams } = new URL(request.url)
+    const filterByFormula = searchParams.get('filterByFormula')
+
     console.log('API: Fetching applicants from Airtable...')
+    console.log('API: Filter formula:', filterByFormula)
     console.log('API: Environment check:', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
       hasBaseId: !!process.env.AIRTABLE_BASE_ID,
@@ -22,7 +27,7 @@ export async function GET(request: NextRequest) {
     })
     
     const airtable = new AirtableAPI()
-    const applicants = await airtable.getApplicants()
+    const applicants = await airtable.getApplicants(filterByFormula)
     
     console.log(`API: Returning ${applicants.length} applicants to frontend`)
     console.log('API: Sample applicant names:', applicants.slice(0, 3).map(a => a.applicant_name))
