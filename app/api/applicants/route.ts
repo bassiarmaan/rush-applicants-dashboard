@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     // Get filter parameters from URL
     const { searchParams } = new URL(request.url)
-    const filterByFormula = searchParams.get('filterByFormula')
+    const filterByFormula = searchParams.get('filterByFormula') || undefined
 
     console.log('API: Fetching applicants from Airtable...')
     console.log('API: Filter formula:', filterByFormula)
